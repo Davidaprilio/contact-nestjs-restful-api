@@ -17,9 +17,23 @@ export class TestService {
         })
     }
 
+    async deleteContacts() {
+        const user = await this.prismaService.user.findFirst({
+            where: {
+                username: 'test'
+            }
+        })
+        if (!user) return
+        await this.prismaService.contact.deleteMany({
+            where: {
+                user_id: user.id
+            }
+        })
+    }
+
 
     async createUser() {
-        await this.prismaService.user.create({
+        return await this.prismaService.user.create({
             data: {
                 name: 'Test',
                 username: 'test',
@@ -28,4 +42,33 @@ export class TestService {
             }
         })
     }
+
+
+    async createContact(userId: number) {
+        return await this.prismaService.contact.create({
+            data: {
+                first_name: 'test',
+                last_name: 'test',
+                email: 'test@example.com',
+                phone: '08123456789',
+                user_id: userId
+            }
+        })
+    }
+
+
+    async getContacts() {
+        const user = await this.prismaService.user.findFirst({
+            where: {
+                username: 'test'
+            }
+        })
+        if (!user) return []
+        return await this.prismaService.contact.findMany({
+            where: {
+                user_id: user.id
+            }
+        })
+    }
+
 }
