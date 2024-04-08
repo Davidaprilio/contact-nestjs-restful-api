@@ -18,15 +18,23 @@ export class TestService {
     }
 
     async deleteContacts() {
-        const user = await this.prismaService.user.findFirst({
-            where: {
-                username: 'test'
-            }
-        })
-        if (!user) return
         await this.prismaService.contact.deleteMany({
             where: {
-                user_id: user.id
+                user: {
+                    username: 'test'
+                }
+            }
+        })
+    }
+
+    async deleteAddresses() {
+        await this.prismaService.address.deleteMany({
+            where: {
+                contact: {
+                    user: {
+                        username: 'test'
+                    }
+                }
             }
         })
     }
@@ -55,6 +63,20 @@ export class TestService {
             }
         })
     }
+    
+    async createAddress(contactId: number) {
+        return await this.prismaService.address.create({
+            data: {
+                contact_id: contactId,
+                street: 'street test',
+                city: 'city test',
+                province: 'province test',
+                country: 'country test',
+                postal_code: '1234',
+
+            }
+        })
+    }
 
 
     async getContacts() {
@@ -67,6 +89,18 @@ export class TestService {
         return await this.prismaService.contact.findMany({
             where: {
                 user_id: user.id
+            }
+        })
+    }
+
+    async getAddresses() {
+        return await this.prismaService.address.findMany({
+            where: {
+                contact: {
+                    user: {
+                        username: 'test'
+                    }
+                }
             }
         })
     }
