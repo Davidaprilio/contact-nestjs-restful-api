@@ -4,27 +4,30 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class TestService {
+    constructor(private prismaService: PrismaService) {}
 
-    constructor(
-        private prismaService: PrismaService,
-    ) {}
+    async deleteAll() {
+        await this.deleteAddresses();
+        await this.deleteContacts();
+        await this.deleteUser();
+    }
 
     async deleteUser() {
         await this.prismaService.user.deleteMany({
             where: {
-                username: 'test'
-            }
-        })
+                username: 'test',
+            },
+        });
     }
 
     async deleteContacts() {
         await this.prismaService.contact.deleteMany({
             where: {
                 user: {
-                    username: 'test'
-                }
-            }
-        })
+                    username: 'test',
+                },
+            },
+        });
     }
 
     async deleteAddresses() {
@@ -32,13 +35,12 @@ export class TestService {
             where: {
                 contact: {
                     user: {
-                        username: 'test'
-                    }
-                }
-            }
-        })
+                        username: 'test',
+                    },
+                },
+            },
+        });
     }
-
 
     async createUser() {
         return await this.prismaService.user.create({
@@ -46,11 +48,10 @@ export class TestService {
                 name: 'Test',
                 username: 'test',
                 password: await bcrypt.hash('password', 10),
-                token: 'test'
-            }
-        })
+                token: 'test',
+            },
+        });
     }
-
 
     async createContact(userId: number) {
         return await this.prismaService.contact.create({
@@ -59,11 +60,11 @@ export class TestService {
                 last_name: 'test',
                 email: 'test@example.com',
                 phone: '08123456789',
-                user_id: userId
-            }
-        })
+                user_id: userId,
+            },
+        });
     }
-    
+
     async createAddress(contactId: number) {
         return await this.prismaService.address.create({
             data: {
@@ -73,24 +74,22 @@ export class TestService {
                 province: 'province test',
                 country: 'country test',
                 postal_code: '1234',
-
-            }
-        })
+            },
+        });
     }
-
 
     async getContacts() {
         const user = await this.prismaService.user.findFirst({
             where: {
-                username: 'test'
-            }
-        })
-        if (!user) return []
+                username: 'test',
+            },
+        });
+        if (!user) return [];
         return await this.prismaService.contact.findMany({
             where: {
-                user_id: user.id
-            }
-        })
+                user_id: user.id,
+            },
+        });
     }
 
     async getAddresses() {
@@ -98,11 +97,10 @@ export class TestService {
             where: {
                 contact: {
                     user: {
-                        username: 'test'
-                    }
-                }
-            }
-        })
+                        username: 'test',
+                    },
+                },
+            },
+        });
     }
-
 }
